@@ -90,17 +90,16 @@ NONCE_SALT="$(openssl rand -hex "$SALTS_LEN")"
 if [ "$SETUP_CHECK" = "true" ]
 then
 
-  echo "<?php " > wp-credentials.php
+  printf "<?php \r" > wp-credentials.php
   for argument in "$@"
   do
-    key=$(echo $argument | cut -f1 -d=)
-    value=$(echo $argument | cut -f2 -d=)
+    key=$(printf "%s" $argument | tr '[a-z]' '[A-Z]' | cut -f1 -d=)
+    value=$(printf "%s" $argument | cut -f2 -d=)
 
     if [[ $key == *"--"* ]]; then
-
       name="${key:2}";
-      echo "define( '${name/-/_}', '$value' );" >> wp-credentials.php
-   fi
+      printf "define( '%s', '%s' ); \r" "${name//-/_}" "$value" >> wp-credentials.php
+    fi
   done
 
 	if [ -f "${DIR}/wp-config.php" ]; then
