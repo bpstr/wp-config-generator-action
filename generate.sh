@@ -62,7 +62,7 @@ else
 	then
 		echo "[$RED ERROR $NC] SALTS_SIZE should be equal or greater than "$SALTS_LEN"."
 		SETUP_CHECK="false"
-	else 
+	else
 		SALTS_LEN=$SALTS_SIZE
 		echo "[$GREEN OK $NC] SALTS_SIZE"
 	fi
@@ -89,8 +89,22 @@ NONCE_SALT="$(openssl rand -hex "$SALTS_LEN")"
 
 if [ "$SETUP_CHECK" = "true" ]
 then
+
+  echo "<?php " > wp-credentials.php
+  for argument in "$@"
+  do
+    key=$(echo $argument | cut -f1 -d=)
+    value=$(echo $argument | cut -f2 -d=)
+
+    if [[ $key == *"--"* ]]; then
+
+      name="${key:2}";
+      echo "define( '${name/-/_}', '$value' );" >> wp-credentials.php
+   fi
+  done
+
 	if [ -f "${DIR}/wp-config.php" ]; then
-	
+
 		cp "${DIR}/wp-config.php" "${DIR}/wp-config.php.${DATE}"
 		echo "[$CYAN INFO $NC] ${DIR}/wp-config.php already exist. Backup created as ${DIR}/wp-config.php.${DATE}"
 		replaceDefinition "DB_HOST" "${DB_HOST}"
@@ -106,7 +120,7 @@ then
 		replaceDefinition "SECURE_AUTH_SALT" "${SECURE_AUTH_SALT}"
 		replaceDefinition "LOGGED_IN_SALT" "${LOGGED_IN_SALT}"
 		replaceDefinition "NONCE_SALT" "${NONCE_SALT}"
-	else 
+	else
 		echo "[$CYAN INFO $NC] ${DIR}/wp-config.php does not exist. Using default template."
 		printf "%s" "<?php
 /*************************************************
@@ -187,6 +201,8 @@ define( 'WP_DEBUG', false );
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
+
+require_once ABSPATH . 'wp-credentials.php';
 
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';" > "$DIR"/wp-config.php
