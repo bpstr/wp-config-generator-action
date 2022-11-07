@@ -1,0 +1,21 @@
+WP_DB_NAME:
+  description: 'WordPress databasse name'
+  required: true
+WP_DB_USER:
+  description: 'WordPress database username'
+  required: true
+WP_DB_PASS:
+  description: 'WordPress database password'
+  required: true
+WP_DB_HOST:
+  description: 'WordPress databasse host'
+  required: true
+  default: 'localhost'
+WP_TABLE_PREFIX:
+  description: 'WordPress table prefix'
+  required: false
+  default: 'wp_'
+WP_SALTS_SIZE:
+  description: 'WordPress salts size'
+  required: false
+  default: '64'

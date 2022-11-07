@@ -1,0 +1,1 @@
+<?php define( 'GOOGLE_API_KEY', 'gkey' ); define( 'GOOGLE_SECRET', 'gsec' ); 
